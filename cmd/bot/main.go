@@ -41,7 +41,7 @@ func main() {
 
 func helpCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
 	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "hel p")
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "/help - help"+"\n/list list")
 	bot.Send(msg)
 }
 
@@ -50,10 +50,18 @@ func unknownCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "unknown command")
 	bot.Send(msg)
 }
+
+func listCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
+	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "list command")
+	bot.Send(msg)
+}
 func handleCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
 	switch inputMessage.Command() {
 	case "help":
 		helpCommand(bot, inputMessage)
+	case "list":
+		listCommand(bot, inputMessage)
 	default:
 		unknownCommand(bot, inputMessage)
 	}
