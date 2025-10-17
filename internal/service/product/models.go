@@ -1,8 +1,8 @@
 package product
 
 var allProducts = []Product{
-	{Title: "one"},
-	{Title: "two"},
+	{Title: "Стол"},
+	{Title: "Книга"},
 }
 
 type Product struct {
