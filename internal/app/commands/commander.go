@@ -27,7 +27,20 @@ func (c *Commander) HandleCommand(inputMessage *tgbotapi.Message) {
 		c.Help(inputMessage)
 	case "list":
 		c.List(inputMessage)
+	case "get":
+		c.Get(inputMessage)
 	default:
 		c.UnknownCommand(inputMessage)
+	}
+}
+
+func (c *Commander) HandleUpdate(update tgbotapi.Update) {
+	if update.Message == nil {
+		return
+	}
+	if update.Message.IsCommand() {
+		c.HandleCommand(update.Message)
+	} else {
+		c.HandleMessage(update.Message)
 	}
 }

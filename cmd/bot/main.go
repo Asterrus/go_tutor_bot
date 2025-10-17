@@ -32,19 +32,6 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		if update.Message.IsCommand() {
-			commander.HandleCommand(update.Message)
-		} else {
-			messageHandler(bot, update.Message)
-		}
+		commander.HandleUpdate(update)
 	}
-}
-
-func messageHandler(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
-	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "You wrote message: "+inputMessage.Text)
-	bot.Send(msg)
 }
