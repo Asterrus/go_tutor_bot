@@ -2,9 +2,11 @@ package main
 
 import (
 	"bot/internal/app/commands"
+	"bot/internal/service/config"
 	"bot/internal/service/product"
 	"log"
 	"os"
+	"path/filepath"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
@@ -19,16 +21,31 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	domen := os.Getenv("DOMEN")
+	subdomen := os.Getenv("SUBDOMEN")
+	if len(domen) == 0 || len(subdomen) == 0 {
+		log.Panic("DOMEN or SUBDOMEN not provided")
+	}
+	config := config.NewConfig(&domen, &subdomen)
 
-	bot.Debug = true
+	// bot.Debug = true
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.UpdateConfig{
 		Timeout: 60,
 	}
+
 	productService := product.NewService()
-	commander := commands.NewCommander(bot, productService)
+	wd, _ := os.Getwd()
+	path := filepath.Join(wd, "data", "products.json")
+	load_err := productService.LoadProducts(path)
+
+	if load_err != nil {
+		log.Println("Unable to load products")
+	}
+
+	commander := commands.NewCommander(bot, productService, config)
 
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {

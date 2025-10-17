@@ -11,31 +11,37 @@ import (
 
 func (c *Commander) Get(inputMessage *tgbotapi.Message) {
 	args := inputMessage.CommandArguments()
-	log.Printf("args string: %v", args)
 	argsSlice := strings.Split(args, " ")
-	log.Printf("args slice: %v", argsSlice)
-	otputMessage := "Get with args: \n"
-	for _, arg := range argsSlice {
-		otputMessage += fmt.Sprintf("%s \n", arg)
+	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
+
+	if len(argsSlice) == 0 {
+		err_msg := "Product ID not provided!"
+		msg := tgbotapi.NewMessage(inputMessage.Chat.ID, err_msg)
+		c.bot.Send(msg)
+		return
+	} else if len(argsSlice) > 1 {
+		err_msg := "Command expects 1 argument"
+		msg := tgbotapi.NewMessage(inputMessage.Chat.ID, err_msg)
+		c.bot.Send(msg)
+		return
 	}
 
-	firstArg := argsSlice[0]
-
-	arg, err := strconv.Atoi(firstArg)
+	arg, err := strconv.Atoi(argsSlice[0])
 	log.Printf("Atoi result: %v, %v", arg, err)
 	if err != nil {
-		otputMessage += fmt.Sprintf("wrong first arg, must be int: '%v'", firstArg)
-	} else {
-		otputMessage += fmt.Sprintf("First Arg is valid %v \n", arg)
-		item, err := c.productService.Get(arg)
-		if err != nil {
-			otputMessage += fmt.Sprintf("No product with id %v \n", arg)
-		} else {
-			otputMessage += fmt.Sprintf("Find product %v \n", item.Title)
-		}
+		err_msg := fmt.Sprintf("wrong first arg, must be int: '%v'", arg)
+		msg := tgbotapi.NewMessage(inputMessage.Chat.ID, err_msg)
+		c.bot.Send(msg)
+		return
+	}
+	item, err := c.productService.Get(arg)
+	if err != nil {
+		msg := tgbotapi.NewMessage(inputMessage.Chat.ID, err.Error())
+		c.bot.Send(msg)
+		return
 	}
 
-	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
+	otputMessage := fmt.Sprintf("Find product %v \n", item.Title)
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, otputMessage)
 	c.bot.Send(msg)
 }
