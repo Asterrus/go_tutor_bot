@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bot/internal/service/product"
 	"log"
 	"os"
 
@@ -25,6 +26,7 @@ func main() {
 	u := tgbotapi.UpdateConfig{
 		Timeout: 60,
 	}
+	productService := product.NewService()
 
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {
@@ -32,7 +34,7 @@ func main() {
 			continue
 		}
 		if update.Message.IsCommand() {
-			handleCommand(bot, update.Message)
+			handleCommand(bot, update.Message, productService)
 		} else {
 			messageHandler(bot, update.Message)
 		}
@@ -41,7 +43,7 @@ func main() {
 
 func helpCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
 	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "/help - help"+"\n/list list")
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "/help - help"+"\n/list - list of products")
 	bot.Send(msg)
 }
 
@@ -51,17 +53,23 @@ func unknownCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
 	bot.Send(msg)
 }
 
-func listCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
+func listCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message, productServ *product.Service) {
+	outputMsg := "Here all the products: \n\n"
+	products := productServ.List()
+	for _, p := range products {
+		outputMsg += p.Title
+		outputMsg += "\n"
+	}
 	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "list command")
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outputMsg)
 	bot.Send(msg)
 }
-func handleCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
+func handleCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message, productServ *product.Service) {
 	switch inputMessage.Command() {
 	case "help":
 		helpCommand(bot, inputMessage)
 	case "list":
-		listCommand(bot, inputMessage)
+		listCommand(bot, inputMessage, productServ)
 	default:
 		unknownCommand(bot, inputMessage)
 	}
