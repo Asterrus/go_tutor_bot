@@ -53,7 +53,7 @@ func (c *Commander) New(inputMessage *tgbotapi.Message) {
 		return
 	}
 
-	newProductID := c.productService.New(title, validPrice)
+	newProductID := c.productService.Create(title, validPrice)
 	newProduct, _ := c.productService.Get(newProductID)
 	otputMessage := fmt.Sprintf("Created %s ID: %v \n", newProduct.Title, newProduct.ID)
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, otputMessage)

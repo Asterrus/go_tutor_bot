@@ -70,7 +70,7 @@ func (c *Commander) Edit(inputMessage *tgbotapi.Message) {
 		return
 	}
 
-	c.productService.Edit(editedProduct.ID, title, validPrice)
+	c.productService.Update(editedProduct.ID, title, validPrice)
 	otputMessage := fmt.Sprintf("Product with ID: %v changed\n", editedProduct.ID)
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, otputMessage)
 	c.bot.Send(msg)

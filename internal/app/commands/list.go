@@ -20,7 +20,7 @@ type ButtonData struct {
 	Direction Direction
 }
 
-func (c *Commander) List(userID int64, page int) {
+func (c *Commander) RetrieveList(userID int64, page int) {
 	outputMsg := fmt.Sprintf("Here all the products on page %d: \n\n", page)
 	allProducts := c.productService.List()
 	products := c.paginator.GetPaginatedItems(c.productService.List(), page)
@@ -101,5 +101,7 @@ func (c *Commander) List(userID int64, page int) {
 		}
 	}
 	c.bot.Send(msg)
-
+}
+func (c *Commander) List(inputMessage *tgbotapi.Message) {
+	c.RetrieveList(inputMessage.Chat.ID, 1)
 }

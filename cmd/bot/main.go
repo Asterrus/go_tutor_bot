@@ -3,8 +3,8 @@ package main
 import (
 	"bot/internal/app/commands"
 	"bot/internal/service/config"
+	"bot/internal/service/logistic/product"
 	"bot/internal/service/paginator"
-	"bot/internal/service/product"
 	"log"
 	"os"
 	"path/filepath"
@@ -46,7 +46,7 @@ func main() {
 		log.Println("Unable to load products")
 	}
 
-	commander := commands.NewCommander(bot, productService, config, paginator)
+	var commander commands.ProductCommander = commands.NewCommander(bot, productService, config, paginator)
 
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {

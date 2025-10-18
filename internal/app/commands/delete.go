@@ -40,7 +40,7 @@ func (c *Commander) Delete(inputMessage *tgbotapi.Message) {
 		c.bot.Send(msg)
 		return
 	}
-	c.productService.Delete(arg)
+	c.productService.Remove(arg)
 
 	otputMessage := fmt.Sprintf("Product %s with ID %v deleted \n", item.Title, item.ID)
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, otputMessage)

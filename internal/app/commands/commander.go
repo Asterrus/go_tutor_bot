@@ -2,8 +2,8 @@ package commands
 
 import (
 	"bot/internal/service/config"
+	"bot/internal/service/logistic/product"
 	"bot/internal/service/paginator"
-	"bot/internal/service/product"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,16 +11,26 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+type ProductCommander interface {
+	Help(inputMessage *tgbotapi.Message)
+	Get(inputMessage *tgbotapi.Message)
+	List(inputMessage *tgbotapi.Message)
+	Delete(inputMessage *tgbotapi.Message)
+	New(inputMessage *tgbotapi.Message)
+	Edit(inputMessage *tgbotapi.Message)
+	HandleUpdate(tgbotapi.Update)
+}
+
 type Commander struct {
 	bot            *tgbotapi.BotAPI
-	productService *product.Service
+	productService product.ProductService
 	config         *config.Config
 	paginator      *paginator.Paginator[*product.Product]
 }
 
 func NewCommander(
 	bot *tgbotapi.BotAPI,
-	productService *product.Service,
+	productService product.ProductService,
 	config *config.Config,
 	paginator *paginator.Paginator[*product.Product],
 ) *Commander {
@@ -43,7 +53,7 @@ func (c *Commander) HandleCommand(inputMessage *tgbotapi.Message) {
 	case c.getCommandName("help"), "help":
 		c.Help(inputMessage)
 	case c.getCommandName("list"), "list":
-		c.List(inputMessage.Chat.ID, 1)
+		c.List(inputMessage)
 	case c.getCommandName("get"), "get":
 		c.Get(inputMessage)
 	case c.getCommandName("delete"), "delete":
@@ -72,7 +82,7 @@ func (c *Commander) HandleUpdate(update tgbotapi.Update) {
 		}
 		fmt.Printf("PAGE: %v \n", data.Page)
 
-		c.List(update.CallbackQuery.From.ID, data.Page)
+		c.RetrieveList(update.CallbackQuery.From.ID, data.Page)
 		return
 	}
 	if update.Message == nil {

@@ -10,6 +10,14 @@ import (
 
 type ProductMap map[int]*Product
 
+type ProductService interface {
+	Get(productID int) (*Product, error)
+	List() []*Product
+	Create(title string, price float64) int
+	Update(ProductID int, title string, price float64)
+	Remove(ProductID int)
+}
+
 type Service struct {
 	products ProductMap
 }
@@ -32,16 +40,16 @@ func (s *Service) List() []*Product {
 	return productSlice
 }
 
-func (s *Service) Get(idx int) (*Product, error) {
-	product, ok := s.products[idx]
+func (s *Service) Get(productID int) (*Product, error) {
+	product, ok := s.products[productID]
 	if !ok {
-		return nil, fmt.Errorf("no product with ID %d", idx)
+		return nil, fmt.Errorf("no product with ID %d", productID)
 	}
 	return product, nil
 }
 
-func (s *Service) Delete(idx int) {
-	delete(s.products, idx)
+func (s *Service) Remove(productID int) {
+	delete(s.products, productID)
 }
 
 func (s *Service) getNewID() int {
@@ -52,7 +60,7 @@ func (s *Service) getNewID() int {
 	return maxKey + 1
 }
 
-func (s *Service) New(title string, price float64) int {
+func (s *Service) Create(title string, price float64) int {
 	productID := s.getNewID()
 	newProduct := Product{
 		ID:    productID,
@@ -62,7 +70,7 @@ func (s *Service) New(title string, price float64) int {
 	s.products[productID] = &newProduct
 	return productID
 }
-func (s *Service) Edit(productID int, title string, price float64) {
+func (s *Service) Update(productID int, title string, price float64) {
 	editedProduct, _ := s.Get(productID)
 	editedProduct.Price = price
 	editedProduct.Title = title
