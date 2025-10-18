@@ -50,6 +50,8 @@ func (c *Commander) HandleCommand(inputMessage *tgbotapi.Message) {
 		c.Delete(inputMessage)
 	case c.getCommandName("new"), "new":
 		c.New(inputMessage)
+	case c.getCommandName("edit"), "edit":
+		c.Edit(inputMessage)
 	default:
 		c.UnknownCommand(inputMessage)
 	}

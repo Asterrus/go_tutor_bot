@@ -52,15 +52,20 @@ func (s *Service) getNewID() int {
 	return maxKey + 1
 }
 
-func (s *Service) New(name string, price float64) int {
+func (s *Service) New(title string, price float64) int {
 	productID := s.getNewID()
 	newProduct := Product{
 		ID:    productID,
-		Title: name,
+		Title: title,
 		Price: price,
 	}
 	s.products[productID] = &newProduct
 	return productID
+}
+func (s *Service) Edit(productID int, title string, price float64) {
+	editedProduct, _ := s.Get(productID)
+	editedProduct.Price = price
+	editedProduct.Title = title
 }
 func (s *Service) LoadProducts(path string) error {
 
