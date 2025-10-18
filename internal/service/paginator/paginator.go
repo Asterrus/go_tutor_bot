@@ -4,11 +4,16 @@ import (
 	"math"
 )
 
+type PaginatorInterface[T any] interface {
+	GetPaginatedItems(items []T, page int) []T
+	TotalPages(items []T) int
+}
+
 type Paginator[T any] struct {
 	ItemsOnPage int
 }
 
-func NewPaginator[T any](itemsOnPage int) *Paginator[T] {
+func NewPaginator[T any](itemsOnPage int) PaginatorInterface[T] {
 	return &Paginator[T]{ItemsOnPage: itemsOnPage}
 }
 

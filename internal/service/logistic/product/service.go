@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 )
 
@@ -22,10 +23,18 @@ type Service struct {
 	products ProductMap
 }
 
-func NewService() *Service {
-	return &Service{
+func NewService() ProductService {
+	service := Service{
 		products: ProductMap{},
 	}
+	wd, _ := os.Getwd()
+	path := filepath.Join(wd, "data", "products.json")
+	load_err := service.LoadProducts(path)
+
+	if load_err != nil {
+		log.Println("Unable to load products")
+	}
+	return &service
 }
 
 func (s *Service) List() []*Product {

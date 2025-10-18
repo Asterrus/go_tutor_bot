@@ -25,15 +25,15 @@ type Commander struct {
 	bot            *tgbotapi.BotAPI
 	productService product.ProductService
 	config         *config.Config
-	paginator      *paginator.Paginator[*product.Product]
+	paginator      paginator.PaginatorInterface[*product.Product]
 }
 
 func NewCommander(
 	bot *tgbotapi.BotAPI,
 	productService product.ProductService,
 	config *config.Config,
-	paginator *paginator.Paginator[*product.Product],
-) *Commander {
+	paginator paginator.PaginatorInterface[*product.Product],
+) ProductCommander {
 	return &Commander{
 		bot:            bot,
 		productService: productService,

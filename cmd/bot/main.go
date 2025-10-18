@@ -7,7 +7,6 @@ import (
 	"bot/internal/service/paginator"
 	"log"
 	"os"
-	"path/filepath"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
@@ -38,13 +37,6 @@ func main() {
 	}
 	paginator := paginator.NewPaginator[*product.Product](5)
 	productService := product.NewService()
-	wd, _ := os.Getwd()
-	path := filepath.Join(wd, "data", "products.json")
-	load_err := productService.LoadProducts(path)
-
-	if load_err != nil {
-		log.Println("Unable to load products")
-	}
 
 	var commander commands.ProductCommander = commands.NewCommander(bot, productService, config, paginator)
 
