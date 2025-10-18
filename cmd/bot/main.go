@@ -3,6 +3,7 @@ package main
 import (
 	"bot/internal/app/commands"
 	"bot/internal/service/config"
+	"bot/internal/service/paginator"
 	"bot/internal/service/product"
 	"log"
 	"os"
@@ -35,7 +36,7 @@ func main() {
 	u := tgbotapi.UpdateConfig{
 		Timeout: 60,
 	}
-
+	paginator := paginator.NewPaginator[*product.Product](5)
 	productService := product.NewService()
 	wd, _ := os.Getwd()
 	path := filepath.Join(wd, "data", "products.json")
@@ -45,7 +46,7 @@ func main() {
 		log.Println("Unable to load products")
 	}
 
-	commander := commands.NewCommander(bot, productService, config)
+	commander := commands.NewCommander(bot, productService, config, paginator)
 
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {

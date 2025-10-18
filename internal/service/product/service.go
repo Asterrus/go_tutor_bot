@@ -20,16 +20,14 @@ func NewService() *Service {
 func (s *Service) List() []*Product {
 	return s.products
 }
-
 func (s *Service) Get(idx int) (*Product, error) {
 	fmt.Printf("Service GET. idx: %d, len(products): %d", idx, len(s.products))
-	if idx >= len(s.products) {
+	if idx >= len(s.products) || idx < 0 {
 		return nil, fmt.Errorf("Product with idx: %d not found", idx)
 	}
 	product := s.products[idx]
 	return product, nil
 }
-
 func (s *Service) LoadProducts(path string) error {
 
 	file, err := os.ReadFile(path)
