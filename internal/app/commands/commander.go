@@ -46,6 +46,8 @@ func (c *Commander) HandleCommand(inputMessage *tgbotapi.Message) {
 		c.List(inputMessage.Chat.ID, 1)
 	case c.getCommandName("get"), "get":
 		c.Get(inputMessage)
+	case c.getCommandName("delete"), "delete":
+		c.Delete(inputMessage)
 	default:
 		c.UnknownCommand(inputMessage)
 	}

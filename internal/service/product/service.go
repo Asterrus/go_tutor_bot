@@ -39,6 +39,11 @@ func (s *Service) Get(idx int) (*Product, error) {
 	}
 	return product, nil
 }
+
+func (s *Service) Delete(idx int) {
+	delete(s.products, idx)
+}
+
 func (s *Service) LoadProducts(path string) error {
 
 	file, err := os.ReadFile(path)
