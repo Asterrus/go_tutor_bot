@@ -41,7 +41,7 @@ func (c *Commander) Get(inputMessage *tgbotapi.Message) {
 		return
 	}
 
-	otputMessage := fmt.Sprintf("Find product %v \n", item.Title)
+	otputMessage := fmt.Sprintf("Find product %v ID: %v \n", item.Title, item.ID)
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, otputMessage)
 	c.bot.Send(msg)
 }

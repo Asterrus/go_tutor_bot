@@ -5,27 +5,38 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
+type ProductMap map[int]*Product
+
 type Service struct {
-	products []*Product
+	products ProductMap
 }
 
 func NewService() *Service {
 	return &Service{
-		products: []*Product{},
+		products: ProductMap{},
 	}
 }
 
 func (s *Service) List() []*Product {
-	return s.products
-}
-func (s *Service) Get(idx int) (*Product, error) {
-	fmt.Printf("Service GET. idx: %d, len(products): %d", idx, len(s.products))
-	if idx >= len(s.products) || idx < 0 {
-		return nil, fmt.Errorf("Product with idx: %d not found", idx)
+	productSlice := []*Product{}
+	for _, value := range s.products {
+		productSlice = append(productSlice, value)
 	}
-	product := s.products[idx]
+	sort.Slice(
+		productSlice,
+		func(i, j int) (less bool) { return productSlice[i].ID < productSlice[j].ID },
+	)
+	return productSlice
+}
+
+func (s *Service) Get(idx int) (*Product, error) {
+	product, ok := s.products[idx]
+	if !ok {
+		return nil, fmt.Errorf("no product with ID %d", idx)
+	}
 	return product, nil
 }
 func (s *Service) LoadProducts(path string) error {
@@ -35,10 +46,15 @@ func (s *Service) LoadProducts(path string) error {
 		log.Printf("No products.json file found in bot/ directory")
 	}
 	fmt.Printf("file, err: %s, %s", file, err)
-	err = json.Unmarshal(file, &s.products)
+	productMap := map[int]Product{}
+	err = json.Unmarshal(file, &productMap)
 	if err != nil {
 		log.Println(err)
 	}
+	for key, value := range productMap {
+		s.products[key] = &value
+	}
+
 	log.Println("Products: ", s.products)
 	return err
 }
