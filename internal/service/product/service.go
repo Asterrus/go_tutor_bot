@@ -44,6 +44,24 @@ func (s *Service) Delete(idx int) {
 	delete(s.products, idx)
 }
 
+func (s *Service) getNewID() int {
+	maxKey := 0
+	for key := range s.products {
+		maxKey = max(maxKey, key)
+	}
+	return maxKey + 1
+}
+
+func (s *Service) New(name string, price float64) int {
+	productID := s.getNewID()
+	newProduct := Product{
+		ID:    productID,
+		Title: name,
+		Price: price,
+	}
+	s.products[productID] = &newProduct
+	return productID
+}
 func (s *Service) LoadProducts(path string) error {
 
 	file, err := os.ReadFile(path)

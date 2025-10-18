@@ -25,7 +25,9 @@ func (c *Commander) List(userID int64, page int) {
 	allProducts := c.productService.List()
 	products := c.paginator.GetPaginatedItems(c.productService.List(), page)
 	for _, p := range products {
-		outputMsg += p.Title
+		outputMsg += fmt.Sprintf("ID: %d ", p.ID)
+		outputMsg += fmt.Sprintf("%s ", p.Title)
+		outputMsg += fmt.Sprintf("%.2f ", p.Price)
 		outputMsg += "\n"
 	}
 

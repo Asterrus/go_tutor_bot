@@ -48,6 +48,8 @@ func (c *Commander) HandleCommand(inputMessage *tgbotapi.Message) {
 		c.Get(inputMessage)
 	case c.getCommandName("delete"), "delete":
 		c.Delete(inputMessage)
+	case c.getCommandName("new"), "new":
+		c.New(inputMessage)
 	default:
 		c.UnknownCommand(inputMessage)
 	}
